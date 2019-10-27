@@ -23,15 +23,77 @@ namespace Lab1_SunnyTravel.ConsoleProject
                 {
                     var model = GetUserRequirements();
                     var filterFunc = BuildFilterFunc(model);
+                    var filterFuncRoom = BuildFilterFuncRoom(model);
+                    var filterFuncMeal = BuildFilterFuncMeal(model);
+                    var filterFuncTour = BuildFilterFuncTour(model);
 
                     var repository = scope.Resolve<IEventRepository>();
-                    var events = repository.Where(filterFunc);
-                    PrintEvents(events);
+                    var hotels = repository.Where(filterFunc);
+                    var rooms = repository.WhereRoomType(filterFuncRoom);
+                    var meals = repository.WhereMeal(filterFuncMeal);
+                    var tours = repository.WhereTour(filterFuncTour);
+
+                    var h1 = rooms.Intersect(tours).ToList();
+                    var h2 = h1.Intersect(meals).ToList();
+                    var h = h2.Intersect(hotels).ToList();
+                    PrintEvents(h);
 
                     Console.ReadKey();
                     Console.Clear();
                 }
             }
+        }
+
+        private static Func<Room, bool> BuildFilterFuncRoom(EventFilterModelIn model)
+        {
+
+            var builder = PredicateBuilder.New<Room>(true);
+
+            if (model.NumberOfPeople != null)
+            {
+                builder = builder.And(t => t.Seats.Equals(model.NumberOfPeople));
+            }
+
+            if (model.RoomType != null)
+            {
+                builder = builder.And(t => t.Type.IndexOf(model.RoomType, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            var filterFunc = builder.Compile();
+            return filterFunc;
+        }
+
+        private static Func<Meal, bool> BuildFilterFuncMeal(EventFilterModelIn model)
+        {
+
+            var builder = PredicateBuilder.New<Meal>(true);
+
+            if (model.Meal != null)
+            {
+                builder = builder.And(t => t.Type.IndexOf(model.Meal, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            var filterFunc = builder.Compile();
+            return filterFunc;
+        }
+
+        private static Func<Tour, bool> BuildFilterFuncTour(EventFilterModelIn model)
+        {
+
+            var builder = PredicateBuilder.New<Tour>(true);
+
+            if (model.DateDepart != null)
+            {
+                builder = builder.And(t => t.DateDepart == model.DateDepart);
+            }
+
+            if (model.Duration != null)
+            {
+                builder = builder.And(t => t.Duration.Equals(model.Duration));
+            }
+
+            var filterFunc = builder.Compile();
+            return filterFunc;
         }
 
         private static Func<Hotel, bool> BuildFilterFunc(EventFilterModelIn model)
@@ -55,32 +117,32 @@ namespace Lab1_SunnyTravel.ConsoleProject
                 builder = builder.And(e => e.Tours.Any(t => t.DateDepart == model.DateDepart));
             }
 
-            if (model.Duration != null)
+            if (model.Duration.HasValue)
             {
-                builder = builder.And(e => e.Tours.Any(t => t.Duration.Equals(model.Duration)));
+                builder = builder.And(e => e.Tours.Any(t => t.Duration == model.Duration));
             }
 
-            if (model.Meal != null)
+            if (model.Meal.IsNullOrEmpty())
             {
                 builder = builder.And(e => e.Meals.Any(t => t.Type.IndexOf(model.Meal, StringComparison.OrdinalIgnoreCase) >= 0));
             }
 
-            if (model.MinHotelRating != null)
+            if (model.MinHotelRating.HasValue)
             {
                 builder = builder.And(e => e.Rating >= model.MinHotelRating);
             }
 
-            if (model.MinSeaDistance != null)
+            if (model.MinSeaDistance.HasValue)
             {
                 builder = builder.And(e => e.SeaDistance <= model.MinSeaDistance);
             }
 
-            if (model.NumberOfPeople != null)
+            if (model.NumberOfPeople.HasValue)
             {
                 builder = builder.And(e => e.Rooms.Any(t => t.Seats.Equals(model.NumberOfPeople)));
             }
 
-            if (model.RoomType != null)
+            if (model.RoomType.IsNullOrEmpty())
             {
                 builder = builder.And(e => e.Rooms.Any(t => t.Type.IndexOf(model.RoomType, StringComparison.OrdinalIgnoreCase) >= 0));
             }
@@ -166,8 +228,8 @@ namespace Lab1_SunnyTravel.ConsoleProject
                 {
                     Console.WriteLine($"{shiftPrefix}Name: {tour.Description}");
                     Console.WriteLine($"{shiftPrefix}Price: {tour.Price}");
-                    Console.WriteLine($"{shiftPrefix}Seats: {tour.Duration}");
-                    Console.WriteLine($"{shiftPrefix}Seats: {tour.DateDepart}");
+                    Console.WriteLine($"{shiftPrefix}Duration: {tour.Duration}");
+                    Console.WriteLine($"{shiftPrefix}DateDepart: {tour.DateDepart}");
                 }
                 Console.WriteLine("\n".PadLeft(25, '-'));
             }
