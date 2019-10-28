@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lab1_SunnyTravel.Core.Entity
 {
-    class Room
+    public class Room
     {
         public int Id { get; set; }
         public string Type { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lab1_SunnyTravel.Core.Models
 {
-    class EventFilterModelIn
+    public class EventFilterModelIn
     {
         public string CountryPartName { get; set; }
         public string CityPartName { get; set; }

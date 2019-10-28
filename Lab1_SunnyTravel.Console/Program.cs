@@ -5,7 +5,6 @@ using System.Linq;
 using Lab1_SunnyTravel.Core;
 using Lab1_SunnyTravel.Core.Entity;
 using Lab1_SunnyTravel.Core.Models;
-using LinqKit;
 
 namespace Lab1_SunnyTravel.ConsoleProject
 {
@@ -22,133 +21,34 @@ namespace Lab1_SunnyTravel.ConsoleProject
                 while (true)
                 {
                     var model = GetUserRequirements();
-                    var filterFunc = BuildFilterFunc(model);
-                    var filterFuncRoom = BuildFilterFuncRoom(model);
-                    var filterFuncMeal = BuildFilterFuncMeal(model);
-                    var filterFuncTour = BuildFilterFuncTour(model);
+                    var filterFunc = FilterFuncHelper.BuildHotelFilterFunc(model);
+                    var filterFuncRoom = FilterFuncHelper.BuildRoomFilterFunc(model);
+                    var filterFuncMeal = FilterFuncHelper.BuildMealFilterFunc(model);
+                    var filterFuncTour = FilterFuncHelper.BuildTourFilterFunc(model);
 
                     var repository = scope.Resolve<IEventRepository>();
                     var hotels = repository.Where(filterFunc);
-                    var rooms = repository.WhereRoomType(filterFuncRoom);
-                    var meals = repository.WhereMeal(filterFuncMeal);
-                    var tours = repository.WhereTour(filterFuncTour);
 
-                    var h1 = rooms.Intersect(tours).ToList();
-                    var h2 = h1.Intersect(meals).ToList();
-                    var h = h2.Intersect(hotels).ToList();
-                    PrintEvents(h);
+                    if(hotels == null || !hotels.Any())
+                    {
+                        Console.WriteLine("No results.");
+                        continue;
+                    }
+
+                    //filter nested collections
+                    foreach (var hotel in hotels)
+                    {
+                        hotel.Meals = hotel.Meals.Where(filterFuncMeal).ToArray();
+                        hotel.Tours = hotel.Tours.Where(filterFuncTour).ToArray();
+                        hotel.Rooms = hotel.Rooms.Where(filterFuncRoom).ToArray();
+                    }
+
+                    PrintEvents(hotels);
 
                     Console.ReadKey();
                     Console.Clear();
                 }
             }
-        }
-
-        private static Func<Room, bool> BuildFilterFuncRoom(EventFilterModelIn model)
-        {
-
-            var builder = PredicateBuilder.New<Room>(true);
-
-            if (model.NumberOfPeople != null)
-            {
-                builder = builder.And(t => t.Seats.Equals(model.NumberOfPeople));
-            }
-
-            if (model.RoomType != null)
-            {
-                builder = builder.And(t => t.Type.IndexOf(model.RoomType, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
-
-            var filterFunc = builder.Compile();
-            return filterFunc;
-        }
-
-        private static Func<Meal, bool> BuildFilterFuncMeal(EventFilterModelIn model)
-        {
-
-            var builder = PredicateBuilder.New<Meal>(true);
-
-            if (model.Meal != null)
-            {
-                builder = builder.And(t => t.Type.IndexOf(model.Meal, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
-
-            var filterFunc = builder.Compile();
-            return filterFunc;
-        }
-
-        private static Func<Tour, bool> BuildFilterFuncTour(EventFilterModelIn model)
-        {
-
-            var builder = PredicateBuilder.New<Tour>(true);
-
-            if (model.DateDepart != null)
-            {
-                builder = builder.And(t => t.DateDepart == model.DateDepart);
-            }
-
-            if (model.Duration != null)
-            {
-                builder = builder.And(t => t.Duration.Equals(model.Duration));
-            }
-
-            var filterFunc = builder.Compile();
-            return filterFunc;
-        }
-
-        private static Func<Hotel, bool> BuildFilterFunc(EventFilterModelIn model)
-        {
-
-            var builder = PredicateBuilder.New<Hotel>(true);
-
-            // IndexOf has StringComparison
-            if (!model.CityPartName.IsNullOrEmpty())
-            {
-                builder = builder.And(e => e.City.Name.IndexOf(model.CityPartName, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
-
-            if (!model.CountryPartName.IsNullOrEmpty())
-            {
-                builder = builder.And(e => e.City.Country.Name.IndexOf(model.CountryPartName, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
-
-            if (model.DateDepart != null)
-            {
-                builder = builder.And(e => e.Tours.Any(t => t.DateDepart == model.DateDepart));
-            }
-
-            if (model.Duration.HasValue)
-            {
-                builder = builder.And(e => e.Tours.Any(t => t.Duration == model.Duration));
-            }
-
-            if (model.Meal.IsNullOrEmpty())
-            {
-                builder = builder.And(e => e.Meals.Any(t => t.Type.IndexOf(model.Meal, StringComparison.OrdinalIgnoreCase) >= 0));
-            }
-
-            if (model.MinHotelRating.HasValue)
-            {
-                builder = builder.And(e => e.Rating >= model.MinHotelRating);
-            }
-
-            if (model.MinSeaDistance.HasValue)
-            {
-                builder = builder.And(e => e.SeaDistance <= model.MinSeaDistance);
-            }
-
-            if (model.NumberOfPeople.HasValue)
-            {
-                builder = builder.And(e => e.Rooms.Any(t => t.Seats.Equals(model.NumberOfPeople)));
-            }
-
-            if (model.RoomType.IsNullOrEmpty())
-            {
-                builder = builder.And(e => e.Rooms.Any(t => t.Type.IndexOf(model.RoomType, StringComparison.OrdinalIgnoreCase) >= 0));
-            }
-
-            var filterFunc = builder.Compile();
-            return filterFunc;
         }
 
         private static EventFilterModelIn GetUserRequirements()
@@ -210,26 +110,27 @@ namespace Lab1_SunnyTravel.ConsoleProject
                 Console.WriteLine($"Rating: {@hotel.Rating}");
                 Console.WriteLine($"Sea Distance: {@hotel.SeaDistance}");
                 var shiftPrefix = string.Empty.PadLeft(5);
+                var shiftPrefix2X = string.Empty.PadLeft(10);
                 Console.WriteLine($"{shiftPrefix}Rooms:");
                 foreach (var room in @hotel.Rooms)
                 {
-                    Console.WriteLine($"{shiftPrefix}Name: {room.Type}");
-                    Console.WriteLine($"{shiftPrefix}Price: {room.Price}");
-                    Console.WriteLine($"{shiftPrefix}Seats: {room.Seats}");
+                    Console.WriteLine($"{shiftPrefix2X}Name: {room.Type}");
+                    Console.WriteLine($"{shiftPrefix2X}Price: {room.Price}");
+                    Console.WriteLine($"{shiftPrefix2X}Seats: {room.Seats}");
                 }
                 Console.WriteLine($"{shiftPrefix}Meals:");
                 foreach (var meal in @hotel.Meals)
                 {
-                    Console.WriteLine($"{shiftPrefix}Name: {meal.Type}");
-                    Console.WriteLine($"{shiftPrefix}Price: {meal.Price}");
+                    Console.WriteLine($"{shiftPrefix2X}Name: {meal.Type}");
+                    Console.WriteLine($"{shiftPrefix2X}Price: {meal.Price}");
                 }
                 Console.WriteLine($"{shiftPrefix}Tours:");
                 foreach (var tour in @hotel.Tours)
                 {
-                    Console.WriteLine($"{shiftPrefix}Name: {tour.Description}");
-                    Console.WriteLine($"{shiftPrefix}Price: {tour.Price}");
-                    Console.WriteLine($"{shiftPrefix}Duration: {tour.Duration}");
-                    Console.WriteLine($"{shiftPrefix}DateDepart: {tour.DateDepart}");
+                    Console.WriteLine($"{shiftPrefix2X}Name: {tour.Description}");
+                    Console.WriteLine($"{shiftPrefix2X}Price: {tour.Price}");
+                    Console.WriteLine($"{shiftPrefix2X}Duration: {tour.Duration}");
+                    Console.WriteLine($"{shiftPrefix2X}DateDepart: {tour.DateDepart}");
                 }
                 Console.WriteLine("\n".PadLeft(25, '-'));
             }

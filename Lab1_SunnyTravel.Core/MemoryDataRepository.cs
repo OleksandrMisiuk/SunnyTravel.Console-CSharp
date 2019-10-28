@@ -15,33 +15,6 @@ namespace Lab1_SunnyTravel.Core
             return hotels.Where(predicate).ToArray();
         }
 
-        public ICollection<Hotel> WhereRoomType(Func<Room, bool> predicate)
-        {
-            foreach (var item in hotels)
-            {
-                item.Rooms = item.Rooms.Where(predicate).ToArray();
-            }
-            return hotels;
-        }
-
-        public ICollection<Hotel> WhereMeal(Func<Meal, bool> predicate)
-        {
-            foreach (var item in hotels)
-            {
-                item.Meals = item.Meals.Where(predicate).ToArray();
-            }
-            return hotels;
-        }
-
-        public ICollection<Hotel> WhereTour(Func<Tour, bool> predicate)
-        {
-            foreach (var item in hotels)
-            {
-                item.Tours = item.Tours.Where(predicate).ToArray();
-            }
-            return hotels;
-        }
-
         public void Load()
         {
             var country1 = new Country
@@ -233,6 +206,5 @@ namespace Lab1_SunnyTravel.Core
             hotels.Add(hotel2);
 
         }
-
     }
 }
