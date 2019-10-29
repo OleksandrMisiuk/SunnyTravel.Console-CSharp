@@ -8,10 +8,5 @@ namespace Lab1_SunnyTravel.Core
     interface IEventRepository
     {
         ICollection<Hotel> Where(Func<Hotel, bool> predicate);
-        //ICollection<City> WhereCity(Func<City, bool> predicate);
-        //ICollection<Room> WhereRoomType(Func<Room, bool> predicate);
-        //ICollection<Meal> WhereMeal(Func<Meal, bool> predicate);
-
-
     }
 }

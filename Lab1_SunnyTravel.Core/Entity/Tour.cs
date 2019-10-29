@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lab1_SunnyTravel.Core.Entity
 {
-    class Tour
+    public class Tour
     {
         public int Id { get; set; }
         public decimal Price { get; set; }

@@ -206,6 +206,5 @@ namespace Lab1_SunnyTravel.Core
             hotels.Add(hotel2);
 
         }
-
     }
 }
