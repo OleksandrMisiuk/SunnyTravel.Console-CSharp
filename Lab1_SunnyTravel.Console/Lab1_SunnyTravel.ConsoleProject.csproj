@@ -6,16 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Lab1_SunnyTravel.Core\ContainerCreater.cs" Link="ContainerCreater.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\Entity\City.cs" Link="City.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Country.cs" Link="Country.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Hotel.cs" Link="Hotel.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Meal.cs" Link="Meal.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Room.cs" Link="Room.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Tour.cs" Link="Tour.cs" />
+    <Compile Include="..\Lab1_SunnyTravel.Core\FilterFuncHelper.cs" Link="FilterFuncHelper.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\IEventRepository.cs" Link="IEventRepository.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\IFakeEventDataLoader.cs" Link="IFakeEventDataLoader.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\MemoryDataRepository.cs" Link="MemoryDataRepository.cs" />
     <Compile Include="..\Lab1_SunnyTravel.Core\Models\EventFilterModelIn.cs" Link="EventFilterModelIn.cs" />
+    <Compile Include="..\Lab1_SunnyTravel.Core\StringExtensions.cs" Link="StringExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,7 +4,7 @@ using Lab1_SunnyTravel.Core.Entity;
 using Lab1_SunnyTravel.Core.Models;
 using LinqKit;
 
-namespace Lab1_SunnyTravel.ConsoleProject
+namespace Lab1_SunnyTravel.Core
 {
     public static class FilterFuncHelper
     {
@@ -23,12 +23,12 @@ namespace Lab1_SunnyTravel.ConsoleProject
                 builder = builder.And(e => e.City.Country.Name.IndexOf(model.CountryPartName, StringComparison.OrdinalIgnoreCase) >= 0);
             }
 
-            if (model.MinHotelRating.HasValue)
+            if (model.MinHotelRating.HasValue&&model.MinHotelRating!=0)
             {
                 builder = builder.And(e => e.Rating >= model.MinHotelRating);
             }
 
-            if (model.MinSeaDistance.HasValue)
+            if (model.MinSeaDistance.HasValue&&model.MinSeaDistance!=0)
             {
                 builder = builder.And(e => e.SeaDistance <= model.MinSeaDistance);
             }
@@ -51,7 +51,7 @@ namespace Lab1_SunnyTravel.ConsoleProject
 
             var builder = PredicateBuilder.New<Room>(true);
 
-            if (model.NumberOfPeople != null)
+            if (model.NumberOfPeople != null&&model.MinSeaDistance!=0)
             {
                 builder = builder.And(t => t.Seats.Equals(model.NumberOfPeople));
             }
@@ -85,7 +85,7 @@ namespace Lab1_SunnyTravel.ConsoleProject
                 builder = builder.And(t => t.DateDepart == model.DateDepart);
             }
 
-            if (model.Duration != null)
+            if (model.Duration != null&&model.Duration!=0)
             {
                 builder = builder.And(t => t.Duration.Equals(model.Duration));
             }

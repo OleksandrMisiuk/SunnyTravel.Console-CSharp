@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lab1_SunnyTravel.ConsoleProject
+namespace Lab1_SunnyTravel.Core
 {
     public static class StringExtensions
     {

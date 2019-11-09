@@ -6,13 +6,13 @@ using Lab1_SunnyTravel.Core;
 using Lab1_SunnyTravel.Core.Entity;
 using Lab1_SunnyTravel.Core.Models;
 
-namespace Lab1_SunnyTravel.ConsoleProject
+namespace Lab1_SunnyTravel.Core
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var container = CreateContainer();
+            var container = ContainerCreater.CreateContainer();
             using (var scope = container.BeginLifetimeScope())
             {
                 var fakeLoader = scope.Resolve<IFakeEventDataLoader>();
@@ -87,17 +87,6 @@ namespace Lab1_SunnyTravel.ConsoleProject
             Console.Write($"Please enter {parameterName}(press enter to skip): ");
             var value = Console.ReadLine();
             return value;
-        }
-
-        private static IContainer CreateContainer()
-        {
-            var builder = new ContainerBuilder();
-
-            builder.RegisterType<MemoryDataRepository>()
-                .AsImplementedInterfaces()
-                .InstancePerLifetimeScope();
-
-            return builder.Build();
         }
 
         private static void PrintEvents(ICollection<Hotel> hotels)
