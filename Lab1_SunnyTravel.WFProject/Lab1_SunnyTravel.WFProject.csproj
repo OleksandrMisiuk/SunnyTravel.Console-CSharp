@@ -59,45 +59,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Lab1_SunnyTravel.Core\ContainerCreater.cs">
-      <Link>ContainerCreater.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\Entity\City.cs">
-      <Link>City.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Country.cs">
-      <Link>Country.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Hotel.cs">
-      <Link>Hotel.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Meal.cs">
-      <Link>Meal.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Room.cs">
-      <Link>Room.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\Entity\Tour.cs">
-      <Link>Tour.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\FilterFuncHelper.cs">
-      <Link>FilterFuncHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\IEventRepository.cs">
-      <Link>IEventRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\IFakeEventDataLoader.cs">
-      <Link>IFakeEventDataLoader.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\MemoryDataRepository.cs">
-      <Link>MemoryDataRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\Models\EventFilterModelIn.cs">
-      <Link>EventFilterModelIn.cs</Link>
-    </Compile>
-    <Compile Include="..\Lab1_SunnyTravel.Core\StringExtensions.cs">
-      <Link>StringExtensions.cs</Link>
-    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -131,6 +92,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lab1_SunnyTravel.Core\Lab1_SunnyTravel.Core.csproj">
+      <Project>{724acf5f-e45e-4dc8-b22c-d2deb3acfd51}</Project>
+      <Name>Lab1_SunnyTravel.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

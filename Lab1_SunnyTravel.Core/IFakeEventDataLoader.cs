@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lab1_SunnyTravel.Core
+﻿namespace Lab1_SunnyTravel.Core
 {
-    interface IFakeEventDataLoader
+    public interface IFakeEventDataLoader
     {
         void Load();
     }
