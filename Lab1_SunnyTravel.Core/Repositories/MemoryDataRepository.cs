@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lab1_SunnyTravel.Core.Entity;
 using System.Linq;
+using Lab1_SunnyTravel.Core.Entity;
 
-namespace Lab1_SunnyTravel.Core
+namespace Lab1_SunnyTravel.Core.Repositories
 {
-    class MemoryDataRepository : IEventRepository, IFakeEventDataLoader
+    internal class MemoryDataRepository : IEventRepository, IFakeEventDataLoader
     {
-        private List<Hotel> hotels = new List<Hotel>();
+        private readonly List<Hotel> _hotels = new List<Hotel>();
 
         public ICollection<Hotel> Where(Func<Hotel, bool> predicate)
         {
-            return hotels.Where(predicate).ToArray();
+            return _hotels.Where(predicate).ToArray();
         }
 
         public void Load()
@@ -97,8 +97,8 @@ namespace Lab1_SunnyTravel.Core
                 Price = 350
             };
 
-            var hotel1 = new Hotel 
-            { 
+            var hotel1 = new Hotel
+            {
                 City = c1city1,
                 Name = "Hotel Kom Jombo",
                 Rating = 4,
@@ -201,8 +201,8 @@ namespace Lab1_SunnyTravel.Core
             hotel2.Tours.Add(tour5);
             hotel2.Tours.Add(tour6);
 
-            hotels.Add(hotel1);
-            hotels.Add(hotel2);
+            _hotels.Add(hotel1);
+            _hotels.Add(hotel2);
 
         }
     }

@@ -4,50 +4,35 @@ using Lab1_SunnyTravel.Core.Entity;
 using Lab1_SunnyTravel.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using Lab1_SunnyTravel.Core.Extensions;
+using Lab1_SunnyTravel.Core.Services;
 
 namespace Lab1_SunnyTravel.WFProject
 {
     public partial class Form1 : Form
     {
-        private static IFakeEventDataLoader fakeLoader;
-        private static IEventRepository repository;
-        public Form1(ILifetimeScope scope)
+        private readonly IEventService _service;
+        public Form1(IEventService service)
         {
+            _service = service;
             InitializeComponent();
-            fakeLoader = scope.Resolve<IFakeEventDataLoader>();
-            fakeLoader.Load();
-            repository = scope.Resolve<IEventRepository>();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             var model = this.GetUserRequeriments();
-            var filterFunc = FilterFuncHelper.BuildHotelFilterFunc(model);
-            var filterFuncRoom = FilterFuncHelper.BuildRoomFilterFunc(model);
-            var filterFuncMeal = FilterFuncHelper.BuildMealFilterFunc(model);
-            var filterFuncTour = FilterFuncHelper.BuildTourFilterFunc(model);
-
             textBox3.Clear();
 
-            var hotels = repository.Where(filterFunc);
-
-            if (hotels == null || !hotels.Any())
+            var hotels = _service.GetFilteredHotels(model);
+            if (hotels.IsNullOrEmpty())
             {
                 textBox3.Text = "No Result";
             }
 
-            //filter nested collections
-            foreach (var hotel in hotels)
-            {
-                hotel.Meals = hotel.Meals.Where(filterFuncMeal).ToArray();
-                hotel.Tours = hotel.Tours.Where(filterFuncTour).ToArray();
-                hotel.Rooms = hotel.Rooms.Where(filterFuncRoom).ToArray();
-            }
-
-            this.PrintResults(hotels);
+            PrintResults(hotels);
         }
 
         private EventFilterModelIn GetUserRequeriments()
@@ -59,14 +44,14 @@ namespace Lab1_SunnyTravel.WFProject
             {
                 filterModel.DateDepart = dateTimePicker1.Value.Date;
             }
-            filterModel.NumberOfPeople = Decimal.ToInt32(numericUpDown2.Value);
-            filterModel.Duration = Decimal.ToInt32(numericUpDown1.Value);
-            filterModel.MinSeaDistance = Decimal.ToInt32(numericUpDown3.Value);
-            filterModel.MinHotelRating = Decimal.ToInt32(numericUpDown4.Value);
+            filterModel.NumberOfPeople = decimal.ToInt32(numericUpDown2.Value);
+            filterModel.Duration = decimal.ToInt32(numericUpDown1.Value);
+            filterModel.MinSeaDistance = decimal.ToInt32(numericUpDown3.Value);
+            filterModel.MinHotelRating = decimal.ToInt32(numericUpDown4.Value);
             if (listBox1.SelectedItem != null)
             {
                 filterModel.RoomType = listBox1.SelectedItem.ToString();
-                Console.WriteLine(filterModel.RoomType);
+                Trace.WriteLine(filterModel.RoomType);
             }
             if (listBox2.SelectedItem != null)
             {
@@ -75,7 +60,7 @@ namespace Lab1_SunnyTravel.WFProject
             return filterModel;
         }
 
-        private void PrintResults(ICollection<Hotel> hotels)
+        private void PrintResults(IEnumerable<Hotel> hotels)
         {
             foreach (var @hotel in hotels)
             {
