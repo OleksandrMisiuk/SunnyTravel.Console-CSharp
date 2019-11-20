@@ -1,10 +1,7 @@
-﻿using Autofac;
-using Lab1_SunnyTravel.Core;
+﻿using Lab1_SunnyTravel.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Autofac;
 
 namespace Lab1_SunnyTravel.WFProject
 {
@@ -18,11 +15,23 @@ namespace Lab1_SunnyTravel.WFProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var container = ContainerCreater.CreateContainer();
+            var container = ContainerCreator.CreateContainer(RegisterForms);
             using (var scope = container.BeginLifetimeScope())
             {
-                Application.Run(new Form1(scope));
+                var fakeLoader = scope.ResolveOptional<IFakeEventDataLoader>();
+                fakeLoader?.Load(); // Load on if this is registered
+
+                var form = scope.Resolve<Form1>();
+                Application.Run(form);
             }
+        }
+
+        private static void RegisterForms(ContainerBuilder builder)
+        {
+            builder.RegisterType<Form1>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
         }
     }
 }

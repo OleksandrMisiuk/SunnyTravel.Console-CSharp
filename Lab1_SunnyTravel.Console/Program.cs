@@ -1,50 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
-using System.Linq;
 using Lab1_SunnyTravel.Core;
 using Lab1_SunnyTravel.Core.Entity;
+using Lab1_SunnyTravel.Core.Extensions;
 using Lab1_SunnyTravel.Core.Models;
+using Lab1_SunnyTravel.Core.Services;
 
-namespace Lab1_SunnyTravel.Core
+namespace Lab1_SunnyTravel.ConsoleProject
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var container = ContainerCreater.CreateContainer();
+            var container = ContainerCreator.CreateContainer();
             using (var scope = container.BeginLifetimeScope())
             {
-                var fakeLoader = scope.Resolve<IFakeEventDataLoader>();
-                fakeLoader.Load();
+                var fakeLoader = scope.ResolveOptional<IFakeEventDataLoader>();
+                fakeLoader?.Load();
 
                 while (true)
                 {
                     var model = GetUserRequirements();
-                    var filterFunc = FilterFuncHelper.BuildHotelFilterFunc(model);
-                    var filterFuncRoom = FilterFuncHelper.BuildRoomFilterFunc(model);
-                    var filterFuncMeal = FilterFuncHelper.BuildMealFilterFunc(model);
-                    var filterFuncTour = FilterFuncHelper.BuildTourFilterFunc(model);
 
-                    var repository = scope.Resolve<IEventRepository>();
-                    var hotels = repository.Where(filterFunc);
+                    var service = scope.Resolve<IEventService>();
+                    var hotels = service.GetFilteredHotels(model);
 
-                    if(hotels == null || !hotels.Any())
+                    if(hotels.IsNullOrEmpty())
                     {
                         Console.WriteLine("No results.");
                         continue;
                     }
 
-                    //filter nested collections
-                    foreach (var hotel in hotels)
-                    {
-                        hotel.Meals = hotel.Meals.Where(filterFuncMeal).ToArray();
-                        hotel.Tours = hotel.Tours.Where(filterFuncTour).ToArray();
-                        hotel.Rooms = hotel.Rooms.Where(filterFuncRoom).ToArray();
-                    }
-
                     PrintEvents(hotels);
 
+                    Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                     Console.Clear();
                 }
@@ -89,7 +79,7 @@ namespace Lab1_SunnyTravel.Core
             return value;
         }
 
-        private static void PrintEvents(ICollection<Hotel> hotels)
+        private static void PrintEvents(IEnumerable<Hotel> hotels)
         {
             foreach (var @hotel in hotels)
             {

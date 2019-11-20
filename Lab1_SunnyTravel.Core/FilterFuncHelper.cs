@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using Lab1_SunnyTravel.Core.Entity;
+using Lab1_SunnyTravel.Core.Extensions;
 using Lab1_SunnyTravel.Core.Models;
 using LinqKit;
 
 namespace Lab1_SunnyTravel.Core
 {
-    public static class FilterFuncHelper
+    internal static class FilterFuncHelper
     {
-
         public static Func<Hotel, bool> BuildHotelFilterFunc(EventFilterModelIn model)
         {
             var builder = PredicateBuilder.New<Hotel>(true);
@@ -45,7 +45,6 @@ namespace Lab1_SunnyTravel.Core
             var filterFunc = builder.Compile();
             return filterFunc;
         }
-
         public static Func<Room, bool> BuildRoomFilterFunc(EventFilterModelIn model)
         {
 
