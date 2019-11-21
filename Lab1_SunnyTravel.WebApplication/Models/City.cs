@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -15,7 +16,8 @@ namespace Lab1_SunnyTravel.Core.Entity
 
         [ForeignKey("country_id")]
         public Country Country { get; set; }
-
-        public List<Hotel> Hotel { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public virtual List<Hotel> Hotel { get; set; }
     }
 }

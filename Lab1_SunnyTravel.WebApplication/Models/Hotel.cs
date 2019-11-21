@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Lab1_SunnyTravel.Core.Entity
 {
@@ -22,10 +21,11 @@ namespace Lab1_SunnyTravel.Core.Entity
         [ForeignKey("city_id")]
         public City City { get; set; }
 
-        public List<Room> Rooms { get; set; }
-
-        public List<Tour> Tours { get; set; }
-
-        public List<Meal> Meals { get; set; }
+        [ForeignKey("hotel_id")]
+        public virtual List<Room> Rooms { get; set; }
+        [ForeignKey("hotel_id")]
+        public virtual List<Tour> Tours { get; set; }
+        [ForeignKey("hotel_id")]
+        public virtual List<Meal> Meals { get; set; }
     }
 }
